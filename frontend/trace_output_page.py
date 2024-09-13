@@ -17,7 +17,11 @@ class TraceOutputPage:
         ページを取得する
         """
 
-        return st.Page(self.__layout, title="グラフ表示")
+        return st.Page(
+            self.__layout,
+            title="グラフ表示",
+            url_path="trace-output"
+        )
 
     def __layout(self):
         st.write("シートとセルを選択してください")
