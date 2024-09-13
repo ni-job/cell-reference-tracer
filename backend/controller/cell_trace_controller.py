@@ -11,7 +11,7 @@ class CellTraceController:
     """
 
     def __init__(self) -> None:
-        self.__excel_handler: ExcelHandler = ExcelHandler()
+        self.__excel_handler: ExcelHandler
 
     def upload_excel(self, file_obj: UploadedFile) -> None:
         """
@@ -22,7 +22,7 @@ class CellTraceController:
         """
 
         path = self.__file_path(file_obj)
-        self.__load_excel(path)
+        self.__excel_handler = ExcelHandler(path)
 
     def __file_path(self, file_obj: UploadedFile) -> str:
         tmp_dir: str = tmpf.mkdtemp()
@@ -33,5 +33,16 @@ class CellTraceController:
 
         return path
 
-    def __load_excel(self, path: str) -> None:
-        self.__excel_handler.load(path)
+    def sheet_names(self) -> list[str]:
+        """
+        Excelファイルのシート名一覧を取得する
+        """
+
+        return self.__excel_handler.sheet_names()
+
+    def get_column_letter(self, num:int) -> str:
+        """
+        列番号をアルファベットに変換する
+        """
+
+        return self.__excel_handler.get_column_letter(num)

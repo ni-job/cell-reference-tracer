@@ -1,5 +1,3 @@
-import os
-import tempfile as tmpf
 import streamlit as st
 from streamlit.navigation.page import StreamlitPage
 from streamlit.runtime.uploaded_file_manager import UploadedFile
@@ -16,6 +14,7 @@ class ExcelSelectPage:
     def __init__(self, controller: CellTraceController) -> None:
         self.__cell_trace_controller: CellTraceController = controller
         self.__trace_output_page: StreamlitPage = TraceOutputPage(controller).page()
+        self.__uploaded_excel_file: (UploadedFile | None)
 
     def page(self) -> StreamlitPage:
         """
@@ -31,7 +30,7 @@ class ExcelSelectPage:
     def __layout(self):
         st.write("Excelのセル参照元をたどってグラフにします")
 
-        self.__uploaded_excel_file: (UploadedFile | None) = st.file_uploader(
+        self.__uploaded_excel_file = st.file_uploader(
             label="Excelファイルを選択してください",
             type=["xlsx", "xlsm", "xls"]
         )
