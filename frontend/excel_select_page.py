@@ -31,7 +31,7 @@ class ExcelSelectPage:
     def __layout(self):
         st.write("Excelのセル参照元をたどってグラフにします")
 
-        self.__uploaded_excel_file: UploadedFile | None = st.file_uploader(
+        self.__uploaded_excel_file: (UploadedFile | None) = st.file_uploader(
             label="Excelファイルを選択してください",
             type=["xlsx", "xlsm", "xls"]
         )
@@ -40,25 +40,8 @@ class ExcelSelectPage:
             label="OK",
             disabled=self.__uploaded_excel_file is None
         ):
-            print("click")
-            self.__upload_file()
-            st.switch_page(self.__trace_output_page)
-
-    def __upload_file(self):
-        if self.__uploaded_excel_file is not None:
-            path = self.__file_path()
-            self.__cell_trace_controller.load_excel(path)
-        else:
-            raise Exception("Excelファイルが選択されていません")
-
-    def __file_path(self) -> str:
-        if self.__uploaded_excel_file is not None:
-            tmp_dir: str = tmpf.mkdtemp()
-            path: str = os.path.join(tmp_dir, self.__uploaded_excel_file.name)
-
-            with open(path, "wb") as f:
-                f.write(self.__uploaded_excel_file.getvalue())
-
-            return path
-        else:
-            raise Exception("Excelファイルが選択されていません")
+            if self.__uploaded_excel_file is not None:
+                self.__cell_trace_controller.upload_excel(self.__uploaded_excel_file)
+                st.switch_page(self.__trace_output_page)
+            else:
+                raise Exception("Excelファイルが選択されていません")
