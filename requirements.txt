@@ -16,7 +16,7 @@ jsonschema-specifications==2023.12.1
 markdown-it-py==3.0.0
 MarkupSafe==2.1.5
 mdurl==0.1.2
-narwhals==1.7.0
+narwhals==1.8.0
 numpy==2.1.1
 openpyxl==3.1.5
 packaging==24.1
@@ -38,6 +38,7 @@ streamlit==1.38.0
 tenacity==8.5.0
 toml==0.10.2
 tornado==6.4.1
+types-openpyxl==3.1.5.20240822
 typing_extensions==4.12.2
 tzdata==2024.1
 urllib3==2.2.3
