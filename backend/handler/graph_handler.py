@@ -1,3 +1,6 @@
+import os
+from tempfile import NamedTemporaryFile
+
 from graphviz import Digraph
 
 
@@ -58,3 +61,20 @@ class GraphvizHandler:
 
         return txt.replace("<", "\\<").replace(">", "\\>").\
             replace("\"", "\\\"").replace("{", "\\{").replace("}", "\\}")
+
+    def export(self) -> bytes:
+        """
+        グラフを出力する
+        """
+        # FIXME: 画像に出力すると日本語が文字化けする...
+
+        graph_data: bytes
+
+        with NamedTemporaryFile("w+b") as tmp_f:
+            self.__graph.render(tmp_f.name)
+            graph_f_name = f"{tmp_f.name}.{self.__graph.format}"
+            with open(graph_f_name, "rb") as graph_f:
+                graph_data = graph_f.read()
+            os.remove(graph_f_name)
+
+        return graph_data

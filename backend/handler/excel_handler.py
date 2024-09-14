@@ -1,5 +1,6 @@
 from collections.abc import Iterator
 from itertools import chain
+from tempfile import NamedTemporaryFile
 from typing import Any
 
 import openpyxl as opxl
@@ -8,6 +9,7 @@ from openpyxl.formula import Tokenizer
 from openpyxl.formula.tokenizer import Token
 from openpyxl.utils.cell import get_column_letter, coordinate_to_tuple, cols_from_range
 from openpyxl.worksheet.formula import ArrayFormula
+from streamlit.runtime.uploaded_file_manager import UploadedFile
 
 
 class ExcelHandler:
@@ -15,8 +17,12 @@ class ExcelHandler:
     Excelを扱うハンドラー
     """
 
-    def __init__(self, path: str) -> None:
-        self.__wb: opxl.Workbook = opxl.load_workbook(path)
+    def __init__(self, file_bytes: bytes, file_name: str) -> None:
+        self.__wb: opxl.Workbook
+
+        with NamedTemporaryFile(suffix=file_name) as f:
+            f.write(file_bytes)
+            self.__wb = opxl.load_workbook(f.name)
 
     def sheet_names(self) -> list[str]:
         """

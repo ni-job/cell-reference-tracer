@@ -1,5 +1,4 @@
-import os
-import tempfile as tmpf
+from io import BufferedReader
 
 from streamlit.runtime.uploaded_file_manager import UploadedFile
 
@@ -16,6 +15,8 @@ class CellTraceController:
     def __init__(self) -> None:
         self.cell_tracer: CellTracer
         self.__excel_handler: ExcelHandler
+        self.__graph_handler:  GraphvizHandler
+        self.__file_name: str
 
     def upload_excel(self, file_obj: UploadedFile) -> None:
         """
@@ -24,18 +25,8 @@ class CellTraceController:
         params:
             file_obj: Excelファイルのファイルデータ
         """
-
-        path = self.__file_path(file_obj)
-        self.__excel_handler = ExcelHandler(path)
-
-    def __file_path(self, file_obj: UploadedFile) -> str:
-        tmp_dir: str = tmpf.mkdtemp()
-        path: str = os.path.join(tmp_dir, file_obj.name)
-
-        with open(path, "wb") as f:
-            f.write(file_obj.getvalue())
-
-        return path
+        self.__file_name = file_obj.name
+        self.__excel_handler = ExcelHandler(file_obj.getvalue(), file_obj.name)
 
     def sheet_names(self) -> list[str]:
         """
@@ -67,8 +58,14 @@ class CellTraceController:
             Graphvizのグラフ
         """
 
-        graph_handler =  GraphvizHandler(graph_format)
-        cell_tracer = CellTracer(self.__excel_handler, graph_handler, max_trace_size)
+        self.__graph_handler =  GraphvizHandler(graph_format)
+        cell_tracer = CellTracer(self.__excel_handler, self.__graph_handler, max_trace_size)
 
         cell_tracer.make_graph(sheet_name, row, clm)
-        return graph_handler.get_graph()
+        return self.__graph_handler.get_graph()
+
+    def export(self) -> tuple[bytes, str]:
+        """
+        グラフを出力する
+        """
+        return self.__graph_handler.export(), self.__file_name.split(".")[0]

@@ -16,6 +16,8 @@ class TraceOutputPage:
         self.__clm: int = 1
         self.__max_trace_size: int = 10
         self.__format: str = "svg"
+        self.__dwnl_file: bytes
+        self.__dwnl_file_name: str
 
     def page(self) -> StreamlitPage:
         """
@@ -49,6 +51,11 @@ class TraceOutputPage:
                     value=10
                 )
 
+                self.__format = st.selectbox(
+                    label="グラフの形式",
+                    options=["svg", "png", "pdf"]
+                )
+
         input_fld_clms = st.columns(
             [6, 3, 3, 1],
             vertical_alignment="bottom"
@@ -57,8 +64,7 @@ class TraceOutputPage:
         with input_fld_clms[0]:
             self.__sheet = st.selectbox(
                 label="シート",
-                options=self.__cell_trace_controller.sheet_names(),
-
+                options=self.__cell_trace_controller.sheet_names()
             )
 
         with input_fld_clms[1]:
@@ -78,15 +84,36 @@ class TraceOutputPage:
         with input_fld_clms[3]:
             st.write("= " + self.__cell_trace_controller.get_column_letter(self.__clm))
 
-        with st.spinner("作成中..."):
-            if st.button(label="グラフを表示"):
-                st.session_state.graph = self.__cell_trace_controller.graph(
-                    self.__sheet,
-                    self.__row,
-                    self.__clm,
-                    self.__format,
-                    self.__max_trace_size
+        button_clms = st.columns(
+            [1, 1, 1, 1],
+            vertical_alignment="bottom"
+        )
+
+        with button_clms[0]:
+            with st.spinner("作成中..."):
+                if st.button(label="グラフを表示"):
+                    st.session_state.graph = self.__cell_trace_controller.graph(
+                        self.__sheet,
+                        self.__row,
+                        self.__clm,
+                        self.__format,
+                        self.__max_trace_size
+                    )
+                    self.__download_file()
+
+        with button_clms[-1]:
+            if "graph" in st.session_state:
+                st.download_button(
+                    label="ダウンロード",
+                    data=self.__dwnl_file,
+                    file_name=self.__dwnl_file_name,
+                    mime=f"image/{self.__format}",
                 )
 
         if "graph" in st.session_state:
             st.graphviz_chart(st.session_state.graph)
+
+    def __download_file(self) -> None:
+        self.__dwnl_file, file_name = self.__cell_trace_controller.export()
+        self.__dwnl_file_name = \
+            f"{file_name}_{self.__sheet}_{self.__row}_{self.__clm}.{self.__format}"
