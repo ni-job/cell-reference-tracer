@@ -3,7 +3,6 @@ from streamlit.navigation.page import StreamlitPage
 from streamlit.runtime.uploaded_file_manager import UploadedFile
 
 from backend.controller.cell_trace_controller import CellTraceController
-from frontend.trace_output_page import TraceOutputPage
 
 
 class ExcelSelectPage:
@@ -13,8 +12,6 @@ class ExcelSelectPage:
 
     def __init__(self, controller: CellTraceController) -> None:
         self.__cell_trace_controller: CellTraceController = controller
-        self.__trace_output_page: StreamlitPage = TraceOutputPage(controller).page()
-        self.__uploaded_excel_file: (UploadedFile | None)
 
     def page(self) -> StreamlitPage:
         """
@@ -30,17 +27,18 @@ class ExcelSelectPage:
     def __layout(self):
         st.write("Excelのセル参照元をたどってグラフにします")
 
-        self.__uploaded_excel_file = st.file_uploader(
+        st.file_uploader(
             label="Excelファイルを選択してください",
-            type=["xlsx", "xlsm", "xls"]
+            type=["xlsx", "xlsm", "xls"],
+            key="uploaded_excel_file"
         )
 
         if st.button(
             label="OK",
-            disabled=self.__uploaded_excel_file is None
+            disabled=st.session_state.uploaded_excel_file is None
         ):
-            if self.__uploaded_excel_file is not None:
-                self.__cell_trace_controller.upload_excel(self.__uploaded_excel_file)
-                st.switch_page(self.__trace_output_page)
+            if st.session_state.uploaded_excel_file is not None:
+                self.__cell_trace_controller.upload_excel(st.session_state.uploaded_excel_file)
+                st.switch_page(st.session_state.trace_output_page)
             else:
                 raise Exception("Excelファイルが選択されていません")

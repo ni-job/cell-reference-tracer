@@ -1,8 +1,12 @@
 import os
 import tempfile as tmpf
+
+from graphviz import Digraph
 from streamlit.runtime.uploaded_file_manager import UploadedFile
 
+from backend.domain.cell_tracer import CellTracer
 from backend.handler.excel_handler import ExcelHandler
+from backend.handler.graph_handler import GraphvizHandler
 
 
 class CellTraceController:
@@ -11,6 +15,7 @@ class CellTraceController:
     """
 
     def __init__(self) -> None:
+        self.cell_tracer: CellTracer
         self.__excel_handler: ExcelHandler
 
     def upload_excel(self, file_obj: UploadedFile) -> None:
@@ -18,7 +23,7 @@ class CellTraceController:
         Excelファイルを読み込む
 
         params:
-            file_obj: Excelファイルのバイナリデータ
+            file_obj: Excelファイルのファイルデータ
         """
 
         path = self.__file_path(file_obj)
@@ -46,3 +51,21 @@ class CellTraceController:
         """
 
         return self.__excel_handler.get_column_letter(num)
+
+    def graph(self, sheet_name: str, row: int, clm: int) -> Digraph:
+        """
+        指定したシート、行、列のセルの参照元をたどったグラフを取得する
+
+        params:
+            sheet_name: シート名
+            row: セルの行番号
+            clm: セルの列番号
+        return:
+            Graphvizのグラフ
+        """
+
+        graph_handler =  GraphvizHandler()
+        cell_tracer = CellTracer(self.__excel_handler, graph_handler)
+
+        cell_tracer.make_graph(sheet_name, row, clm)
+        return graph_handler.get_graph()
