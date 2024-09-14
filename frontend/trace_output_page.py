@@ -14,6 +14,8 @@ class TraceOutputPage:
         self.__sheet: str = ""
         self.__row: int = 1
         self.__clm: int = 1
+        self.__max_trace_size: int = 10
+        self.__format: str = "svg"
 
     def page(self) -> StreamlitPage:
         """
@@ -40,7 +42,12 @@ class TraceOutputPage:
 
         with header_clms[-1]:
             with st.popover(label="設定"):
-                st.write("test")
+                self.__max_trace_size = st.number_input(
+                    label="トレースするRangeの最大サイズ",
+                    min_value=1,
+                    max_value=100,
+                    value=10
+                )
 
         input_fld_clms = st.columns(
             [6, 3, 3, 1],
@@ -76,7 +83,9 @@ class TraceOutputPage:
                 st.session_state.graph = self.__cell_trace_controller.graph(
                     self.__sheet,
                     self.__row,
-                    self.__clm
+                    self.__clm,
+                    self.__format,
+                    self.__max_trace_size
                 )
 
         if "graph" in st.session_state:

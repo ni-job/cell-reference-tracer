@@ -13,13 +13,15 @@ class CellTracer:
     セルの参照元をたどるクラス
     """
 
-    def __init__(self, excel_handler: ExcelHandler, graph_handler: GraphvizHandler):
+    def __init__(
+            self, excel_handler: ExcelHandler, graph_handler: GraphvizHandler, max_trace_size: int
+        ):
         self.__cell_dq: deque[tuple[str, str | None, str | None]]
         self.__excel_hdl: ExcelHandler = excel_handler
         self.__graph_hdl: GraphvizHandler = graph_handler
 
         self.dq_maxsize = 50000
-        self.__max_range_size_to_unpack = 10
+        self.__max_trace_size = max_trace_size
 
     def make_graph(self, sheet_name: str, row: int, clm: int) -> None:
         """
@@ -70,7 +72,7 @@ class CellTracer:
         range_cells_size: int = sum(1 for _ in copy_range_cells)
 
         # アンパック最大数以下なら参照元の各セルのノードを追加する
-        if range_cells_size <= self.__max_range_size_to_unpack:
+        if range_cells_size <= self.__max_trace_size:
             for c in range_cells:
                 self.__add_deque(f"{sheet_name}!{c}", range_cell_address)
 

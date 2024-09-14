@@ -6,8 +6,8 @@ class GraphvizHandler:
     Graphvizを扱うハンドラー
     """
 
-    def __init__(self) -> None:
-        self.__graph: Digraph = Digraph(strict=True)
+    def __init__(self, graph_format: str) -> None:
+        self.__graph: Digraph = Digraph(strict=True, format=graph_format)
         self.__graph.clear(keep_attrs=False)
         self.__graph.attr(
             'node',

@@ -52,7 +52,9 @@ class CellTraceController:
 
         return self.__excel_handler.get_column_letter(num)
 
-    def graph(self, sheet_name: str, row: int, clm: int) -> Digraph:
+    def graph(
+            self, sheet_name: str, row: int, clm: int, graph_format: str, max_trace_size: int
+        ) -> Digraph:
         """
         指定したシート、行、列のセルの参照元をたどったグラフを取得する
 
@@ -60,12 +62,14 @@ class CellTraceController:
             sheet_name: シート名
             row: セルの行番号
             clm: セルの列番号
+            graph_format: グラフのフォーマット
+            max_trace_size: トレースできるRangeの最大サイズ
         return:
             Graphvizのグラフ
         """
 
-        graph_handler =  GraphvizHandler()
-        cell_tracer = CellTracer(self.__excel_handler, graph_handler)
+        graph_handler =  GraphvizHandler(graph_format)
+        cell_tracer = CellTracer(self.__excel_handler, graph_handler, max_trace_size)
 
         cell_tracer.make_graph(sheet_name, row, clm)
         return graph_handler.get_graph()
