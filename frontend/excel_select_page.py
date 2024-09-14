@@ -1,5 +1,3 @@
-import os
-import tempfile as tmpf
 import streamlit as st
 from streamlit.navigation.page import StreamlitPage
 from streamlit.runtime.uploaded_file_manager import UploadedFile
@@ -20,35 +18,27 @@ class ExcelSelectPage:
         Excelファイルを選択するページを取得する
         """
 
-        return st.Page(self.__layout, title="Excelファイル選択")
+        return st.Page(
+            self.__layout,
+            title="Excelファイル選択",
+            url_path="excel-select"
+        )
 
     def __layout(self):
         st.write("Excelのセル参照元をたどってグラフにします")
 
-        self.__uploaded_excel_file: UploadedFile | None = st.file_uploader(
+        st.file_uploader(
             label="Excelファイルを選択してください",
-            type=["xlsx", "xlsm", "xls"]
+            type=["xlsx", "xlsm", "xls"],
+            key="uploaded_excel_file"
         )
 
         if st.button(
             label="OK",
-            disabled=self.__uploaded_excel_file is None
+            disabled=st.session_state.uploaded_excel_file is None
         ):
-            print("click")
-            self.__upload_file()
-
-    def __upload_file(self):
-        if self.__uploaded_excel_file is not None:
-            path = self.__file_path()
-            self.__cell_trace_controller.load_excel(path)
-        else:
-            raise Exception("Excelファイルが選択されていません")
-
-    def __file_path(self) -> str:
-        tmp_dir: str = tmpf.mkdtemp()
-        path: str = os.path.join(tmp_dir, self.__uploaded_excel_file.name)
-
-        with open(path, "wb") as f:
-            f.write(self.__uploaded_excel_file.getvalue())
-
-        return path
+            if st.session_state.uploaded_excel_file is not None:
+                self.__cell_trace_controller.upload_excel(st.session_state.uploaded_excel_file)
+                st.switch_page(st.session_state.trace_output_page)
+            else:
+                raise Exception("Excelファイルが選択されていません")
