@@ -1,12 +1,11 @@
 import os
 import tempfile as tmpf
 
-from graphviz import Digraph
 from streamlit.runtime.uploaded_file_manager import UploadedFile
 
 from backend.domain.cell_tracer import CellTracer
 from backend.handler.excel_handler import ExcelHandler
-from backend.handler.graph_handler import GraphvizHandler
+from backend.handler.graph_handler import GraphvizHandler, Digraph
 
 
 class CellTraceController:
