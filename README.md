@@ -17,7 +17,7 @@
 1. コンテナ作成
 
     ```
-    docker run -d --restart always -p 8501:8501 (IMAGE ID)
+    docker run -d --restart always -p 80:8501 (IMAGE ID)
     ```
 
 1. コンテナ確認
