@@ -31,6 +31,19 @@ class TraceOutputPage:
         )
 
     def __layout(self):
+        # 開発者向けオプションを非表示
+        st.markdown("""
+            <style>
+                .reportview-container {
+                    margin-top: -2em;
+                }
+                #MainMenu {visibility: hidden;}
+                .stAppDeployButton {display:none;}
+                footer {visibility: hidden;}
+                #stDecoration {display:none;}
+            </style>
+        """, unsafe_allow_html=True)
+
         header_clms = st.columns(
             [1, 4, 1],
             vertical_alignment="bottom"

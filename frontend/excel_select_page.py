@@ -25,6 +25,19 @@ class ExcelSelectPage:
         )
 
     def __layout(self):
+        # 開発者向けオプションを非表示
+        st.markdown("""
+            <style>
+                .reportview-container {
+                    margin-top: -2em;
+                }
+                #MainMenu {visibility: hidden;}
+                .stAppDeployButton {display:none;}
+                footer {visibility: hidden;}
+                #stDecoration {display:none;}
+            </style>
+        """, unsafe_allow_html=True)
+
         st.write("Excelのセル参照元をたどってグラフにします")
 
         st.file_uploader(
