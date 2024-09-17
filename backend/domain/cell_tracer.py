@@ -84,22 +84,21 @@ class CellTracer:
         sheet_name, cell_coor = cell_address.split('!')
 
         if self.__is_range(cell_address):
-            cell_formula = None
+            cell_formula = ""
         else:
             row, clm = self.__excel_hdl.coordinate_to_tuple(cell_coor)
             cell_formula = self.__formula(sheet_name, row, clm)
 
-        if not self.__graph_hdl.has_node(cell_address):
+        if not self.__graph_hdl.has_node(cell_address, cell_formula):
             self.__cell_dq.append((cell_address, cell_formula, parent_cell_address))
 
     def __add_graph(
             self, added_cell_address: str, formula: str | None, from_node: str | None
         ) -> None:
-        if not self.__graph_hdl.has_node(added_cell_address):
-            if formula is None:
-                formula = ""
+        if formula is None:
+            formula = ""
 
-            self.__graph_hdl.add_node(added_cell_address, formula)
+        self.__graph_hdl.add_node(added_cell_address, formula)
 
         if from_node is not None:
             self.__graph_hdl.add_edge(from_node, added_cell_address)

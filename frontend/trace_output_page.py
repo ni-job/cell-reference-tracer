@@ -127,6 +127,4 @@ class TraceOutputPage:
             st.graphviz_chart(st.session_state.graph)
 
     def __download_file(self) -> None:
-        self.__dwnl_file, file_name = self.__cell_trace_controller.export()
-        self.__dwnl_file_name = \
-            f"{file_name}_{self.__sheet}_{self.__row}_{self.__clm}.{self.__format}"
+        self.__dwnl_file, self.__dwnl_file_name = self.__cell_trace_controller.export()
