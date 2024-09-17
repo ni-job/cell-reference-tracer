@@ -18,15 +18,15 @@ class CellTraceController:
         self.__graph_handler:  GraphvizHandler
         self.__file_name: str
 
-    def upload_excel(self, file_obj: UploadedFile) -> None:
+    def upload_excel(self, file_bytes: bytes, file_name: str) -> None:
         """
         Excelファイルを読み込む
 
         params:
             file_obj: Excelファイルのファイルデータ
         """
-        self.__file_name = file_obj.name
-        self.__excel_handler = ExcelHandler(file_obj.getvalue(), file_obj.name)
+        self.__file_name = file_name
+        self.__excel_handler = ExcelHandler(file_bytes, file_name)
 
     def sheet_names(self) -> list[str]:
         """

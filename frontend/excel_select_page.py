@@ -51,7 +51,8 @@ class ExcelSelectPage:
             disabled=st.session_state.uploaded_excel_file is None
         ):
             if st.session_state.uploaded_excel_file is not None:
-                self.__cell_trace_controller.upload_excel(st.session_state.uploaded_excel_file)
+                file_obj = st.session_state.uploaded_excel_file
+                self.__cell_trace_controller.upload_excel(file_obj.getvalue(), file_obj.name)
                 st.switch_page(st.session_state.trace_output_page)
             else:
                 raise Exception("Excelファイルが選択されていません")

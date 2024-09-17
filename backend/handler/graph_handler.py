@@ -26,10 +26,12 @@ class GraphvizHandler:
         グラフにノードを追加する
         """
         label = "{" + f"{self.__escape_char(node)}|{self.__escape_char(formula)}" + "}"
-        self.__graph.node(
-            self.__escape(node),
-            label=label
-        )
+
+        if not self.has_node(node, formula):
+            self.__graph.node(
+                self.__escape(node),
+                label=label
+            )
 
     def add_edge(self, start: str, target: str) -> None:
         """
@@ -40,11 +42,15 @@ class GraphvizHandler:
             self.__escape(target)
         )
 
-    def has_node(self, node: str) -> bool:
+    def has_node(self, node: str, formula: str ="") -> bool:
         """
         ノードが存在するかどうかを調べる
         """
-        return self.__escape(node) in self.__graph.body
+        node = self.__escape_char(node)
+        formula = self.__escape_char(formula)
+        label = f"{{{node}|{formula}}}"
+        label = f"\t\"{node}\" [label=\"{label}\"]\n"
+        return label in self.__graph.body
 
     def get_graph(self) -> Digraph:
         """
