@@ -17,6 +17,11 @@ class CellTraceController:
         self.__excel_handler: ExcelHandler
         self.__graph_handler:  GraphvizHandler
         self.__file_name: str
+        self.__sheet: str
+        self.__row: int
+        self.__clm: int
+        self.__format: str
+
 
     def upload_excel(self, file_bytes: bytes, file_name: str) -> None:
         """
@@ -58,6 +63,11 @@ class CellTraceController:
             Graphvizのグラフ
         """
 
+        self.__sheet = sheet_name
+        self.__row = row
+        self.__clm = clm
+        self.__format = graph_format
+
         self.__graph_handler =  GraphvizHandler(graph_format)
         cell_tracer = CellTracer(self.__excel_handler, self.__graph_handler, max_trace_size)
 
@@ -68,4 +78,8 @@ class CellTraceController:
         """
         グラフを出力する
         """
-        return self.__graph_handler.export(), self.__file_name.split(".")[0]
+        return (
+            self.__graph_handler.export(),
+            f"{self.__file_name.split(".")[0]}_"\
+                f"{self.__sheet}_{self.__row}_{self.__clm}.{self.__format}"
+        )
